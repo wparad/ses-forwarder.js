@@ -1,0 +1,39 @@
+{
+  "name": "ses-forwarder",
+  "version": "0.0.0",
+  "description": "Description of the package",
+  "main": "index.js",
+  "scripts": {
+    "start": "node make.js run",
+    "deploy": "node make.js deploy",
+    "test": "mocha tests/**/*.js -R spec"
+  },
+  "dependencies": {
+    "aws-lambda-ses-forwarder": "^3.1.0",
+    "openapi-factory": "^2.0"
+  },
+  "devDependencies": {
+    "aws-architect": "^3.1",
+    "aws-sdk": "^2.2.32",
+    "chai": "^3.2.0",
+    "ci-build-tools": "^1.0.9",
+    "commander": "^2.5.0",
+    "esprima": "^2.7.2",
+    "glob": "^5.0.0",
+    "mocha": "^2.5.3",
+    "sinon": "^1.17.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https//git@source.com/repository.git"
+  },
+  "keywords": [
+    "aws lambda microservice"
+  ],
+  "author": "Author",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://source-code.com/issues"
+  },
+  "homepage": "https://source-code.com"
+}
