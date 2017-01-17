@@ -17,3 +17,10 @@ Visit the [changelog](CHANGELOG.md).
   	npm install
   	npm build
   ```
+### Deployment
+
+  ```bash
+  	npm install
+  	npm build
+    npm deploy
+  ```
