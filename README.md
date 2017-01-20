@@ -14,13 +14,46 @@ Visit the [changelog](CHANGELOG.md).
 ### Building
 
   ```bash
-  	npm install
-  	npm build
+    npm install
+    npm build
   ```
 ### Deployment
 
   ```bash
-  	npm install
-  	npm build
+    npm install
+    npm build
     npm deploy
+  ```
+
+### Service Permssions
+
+   ```json
+   {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Action": [
+                  "s3:*"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::email.bucket/*"
+          },
+          {
+              "Action": [
+                  "ses:SendRawEmail"
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:ses:*:*:*"
+          },
+          {
+              "Effect": "Allow",
+              "Resource": "arn:aws:logs:*:*:*",
+              "Action": [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+              ]
+          }
+      ]
+  }
   ```
