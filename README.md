@@ -25,6 +25,9 @@ Visit the [changelog](CHANGELOG.md).
     npm deploy
   ```
 
+### AWS Setup
+* Add SES sender email address which matches the sender you want to use in the ses-forwarder configuration.
+
 ### Service Permssions
 
    ```json
