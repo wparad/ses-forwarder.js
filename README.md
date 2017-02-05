@@ -29,7 +29,7 @@ Visit the [changelog](CHANGELOG.md).
 * Add SES sender email address which matches the sender you want to use in the ses-forwarder configuration.
 
 ### Service Permssions
-
+[Amazon full permission examples](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/control-user-access.html) are available for restricting send email as SMTP users.
    ```json
    {
       "Version": "2012-10-17",
