@@ -9,6 +9,8 @@ var execAsync = require('child_process').spawn;
 var glob = require('glob');
 var https = require('https');
 var path = require('path');
+const aws = require('aws-sdk');
+aws.config.credentials = new aws.SharedIniFileCredentials({profile: 'wparad'});
 
 var AwsArchitect = require('aws-architect');
 var ci = require('ci-build-tools')(process.env.GIT_TAG_PUSHER);

@@ -1,9 +1,10 @@
 'use strict;'
-var esprima = require('esprima');
-var mocha = require('mocha');
-var assert = require('chai').assert;
-var fs = require('fs');
-var path = require('path');
+const esprima = require('esprima');
+const mocha = require('mocha');
+const assert = require('chai').assert;
+const fs = require('fs');
+const path = require('path');
+const moment = require('moment');
 
 describe('src/ses-forwarder.js', function() {
 	describe('Syntax', function () {
@@ -93,6 +94,118 @@ This is the body.`;
 				]
 			})
 			.then(() => done())
+			.catch((failure) => done(failure));
+		});
+		it('Email address older than 1 month used', function(done) {
+			var fw = require('../src/ses-forwarder');
+			fw.handler({
+				getObject: function(options) {
+					if (options.Bucket === null) { return Promise.reject('Bucket not defined.'); }
+					if (options.Key === null) { return Promise.reject('Bucket object key not defined.'); }
+					return {
+						promise: () => Promise.resolve({
+							Body: '\r\n\r\nThis is the body.'
+						})
+					};
+				}
+			}, {
+				sendRawEmail: function(options) {
+					return { promise: () => Promise.reject('Should never execute') };
+				}
+			}, {
+				Records: [
+					{
+						eventSource: 'aws:ses',
+						eventVersion: '1.0',
+						ses: {
+							receipt: {
+								spamVerdict: {
+									status: 'PASS'
+								},
+								virusVerdict: {
+									status: 'PASS'
+								}
+							},
+							mail: {
+								commonHeaders: {
+									from: [
+										'UnitTestSender@unittent.com'
+									],
+									to: [
+										`${moment().add(-32, 'days').format('YYYYMMDD')}@unittest.net`
+									],
+									subject: 'UnitTest Subject',
+
+								},
+								headers: [
+
+								],
+								messageId: 'UnitTestId-0000'
+							}
+						}
+					}
+				]
+			})
+			.then(result => {
+				if (result === 'Skipping, due to outdated email address.') { done(); }
+				else { done(`Should have skipped email because it is outdated.`); }
+			})
+			.catch((failure) => done(failure));
+		});
+		it('Email address newer than 1 month used', function(done) {
+			var fw = require('../src/ses-forwarder');
+			fw.handler({
+				getObject: function(options) {
+					if (options.Bucket === null) { return Promise.reject('Bucket not defined.'); }
+					if (options.Key === null) { return Promise.reject('Bucket object key not defined.'); }
+					return {
+						promise: () => Promise.resolve({
+							Body: '\r\n\r\nThis is the body.'
+						})
+					};
+				}
+			}, {
+				sendRawEmail: function(options) {
+					return { promise: () => Promise.resolve() };
+				}
+			}, {
+				Records: [
+					{
+						eventSource: 'aws:ses',
+						eventVersion: '1.0',
+						ses: {
+							receipt: {
+								spamVerdict: {
+									status: 'PASS'
+								},
+								virusVerdict: {
+									status: 'PASS'
+								}
+							},
+							mail: {
+								commonHeaders: {
+									from: [
+										'UnitTestSender@unittent.com'
+									],
+									to: [
+										`${moment().add(-30, 'days').format('YYYYMMDD')}@unittest.net`
+									],
+									subject: 'UnitTest Subject',
+
+								},
+								headers: [
+
+								],
+								messageId: 'UnitTestId-0000'
+							}
+						}
+					}
+				]
+			})
+			.then(result => {
+				if (result !== 'Skipping, due to outdated email address.') { done(); }
+				else { done(`Should not have skipped email because it is new.`); }
+			})
 			.catch((failure) => done(failure));
 		});
 	});

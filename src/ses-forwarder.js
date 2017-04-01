@@ -1,8 +1,10 @@
 'use strict';
 
-var forwardFrom = 'no-reply@warrenparad.net';
-var forwardTo = 'wparad@gmail.com';
-var bucket = 'email.warrenparad.net';
+const moment = require('moment');
+
+const forwardFrom = 'no-reply@warrenparad.net';
+const forwardTo = 'wparad@gmail.com';
+const bucket = 'email.warrenparad.net';
 
 exports.handler = function(s3client, sesClient, event) {
 	if(event.Records[0].eventSource !== 'aws:ses'  || event.Records[0].eventVersion !== '1.0') {
@@ -11,23 +13,16 @@ exports.handler = function(s3client, sesClient, event) {
 	var msgInfo = event.Records[0].ses;
 	// don't process spam messages
 	if (msgInfo.receipt.spamVerdict.status === 'FAIL' || msgInfo.receipt.virusVerdict.status === 'FAIL') {
-		/*
-			"spfVerdict": {
-				"status": "PASS"
-			},
-			"dkimVerdict": {
-				"status": "PASS"
-			}
-		*/
 		return Promise.resolve('Message is spam or contains virus, ignoring.')
 	}
 
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
 	var toName = originalTo.split('@')[0];
-	if (toName.match(/^\d{8}$/)) {
-		//return Promise.resolve('Skipping, due to outdated email address.')
+	if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
+		return Promise.resolve('Skipping, due to outdated email address.')
 	}
+
 	var headers = "From: " + forwardFrom + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + originalTo + "\r\n";

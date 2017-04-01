@@ -10,11 +10,12 @@
     "test": "mocha tests/**/*.js -R spec"
   },
   "dependencies": {
+    "moment": "^2.18.1",
     "openapi-factory": "^2.0"
   },
   "devDependencies": {
     "aws-architect": "^3.3.199",
-    "aws-sdk": "^2.2.32",
+    "aws-sdk": "^2.36.0",
     "chai": "^3.2.0",
     "ci-build-tools": "^1.0.9",
     "commander": "^2.5.0",
