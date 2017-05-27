@@ -90,7 +90,7 @@ var event = {
 };
 
 new aws.Lambda().invoke({
-    FunctionName: 'arn:aws:lambda:us-east-1:729379526210:function:ses-forwarder-index',
+    FunctionName: event.Records[0].ses.receipt.action.functionArn,
     InvocationType: 'RequestResponse',
     LogType: 'None',
     Payload: JSON.stringify(event)

@@ -18,7 +18,7 @@ exports.handler = function(s3client, sesClient, event) {
 
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
-	var toName = originalTo.split('@')[0];
+	var toName = originalTo.split('@')[0].toLowerCase();
 	if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
 		return Promise.resolve('Skipping, due to outdated email address.')
 	}
