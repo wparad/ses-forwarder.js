@@ -23,11 +23,11 @@ exports.handler = function(s3client, sesClient, event) {
 		return Promise.resolve('Skipping, due to outdated email address.')
 	}
 
-	var headers = "From: " + forwardFrom + "\r\n";
+	var headers = 'From: ' + originalFrom.replace('<', 'at ').replace('>', '') + ' <' + forwardFrom + '>'+ "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + originalTo + "\r\n";
-	headers += "To: " + forwardTo + "\r\n";
-	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + " (" + msgInfo.mail.messageId.substring(0, 6) + ")" + "\r\n";
+	headers += "To: " + originalTo.replace('<', 'at ').replace('>', '') + ' <' + forwardTo + '>'+ "\r\n";
+	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
 	var headerDictionary = {};
 	msgInfo.mail.headers.map(pair => headerDictionary[pair.name] = pair.value );
@@ -45,10 +45,10 @@ exports.handler = function(s3client, sesClient, event) {
 		if (email) {
 			var splitEmail = email.split("\r\n\r\n");
 			splitEmail.shift();
-			return headers + "\r\n" + `(FROM: ${originalFrom}, TO: ${originalTo})\r\n` + splitEmail.join("\r\n\r\n");
+			return headers + "\r\n" + splitEmail.join("\r\n\r\n");
 		}
 		else {
-			return headers + "\r\n" + `(FROM: ${originalFrom}, TO: ${originalTo})\r\n` + "Empty email";
+			return headers + "\r\n" + "Empty email";
 		}
 	})
 	.then(email => {
