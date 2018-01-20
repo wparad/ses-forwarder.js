@@ -60,3 +60,27 @@ Visit the [changelog](CHANGELOG.md).
       ]
   }
   ```
+
+### Add a new alias (email user)
+* Use the STMP credentials menu in SES
+* Update the policy to match
+
+```json
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "ses:SendRawEmail",
+                "Resource": "*",
+                "Condition": {
+                    "StringEqualsIgnoreCase": {
+                        "ses:FromAddress": [
+                            "email-address@DOMAIN_NAME.COM"
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+```
