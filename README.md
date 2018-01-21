@@ -46,7 +46,7 @@ Visit the [changelog](CHANGELOG.md).
                   "ses:SendRawEmail"
               ],
               "Effect": "Allow",
-              "Resource": "arn:aws:ses:*:*:*"
+              "Resource": "arn:aws:ses:*:*:identity/no-reply@DOMAIN_NAME"
           },
           {
               "Effect": "Allow",
