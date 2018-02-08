@@ -23,10 +23,10 @@ exports.handler = function(s3client, sesClient, event) {
 		return Promise.resolve('Skipping, due to outdated email address.')
 	}
 
-	var headers = 'From: ' + originalFrom.replace('<', 'at ').replace('>', '') + ' <' + forwardFrom + '>'+ "\r\n";
+	var headers = 'From: "' + originalFrom.replace('<', '').replace('>', '') + '" <' + forwardFrom + '>' + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + originalTo + "\r\n";
-	headers += "To: " + originalTo.replace('<', 'at ').replace('>', '') + ' <' + forwardTo + '>'+ "\r\n";
+	headers += 'To: "' + originalTo.replace('<', '').replace('>', '') + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
 	var headerDictionary = {};
