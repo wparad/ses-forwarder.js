@@ -18,15 +18,26 @@ exports.handler = function(s3client, sesClient, event) {
 
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
-	var toName = originalTo.split('@')[0].toLowerCase();
-	if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
-		return Promise.resolve('Skipping, due to outdated email address.')
+	for(let index in msgInfo.mail.commonHeaders.to)
+	{
+		let toName = msgInfo.mail.commonHeaders.to[index].split('@')[0];
+		if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
+			return Promise.resolve('Skipping, due to outdated email address.')
+		}
 	}
 
-	var headers = 'From: "' + originalFrom.replace('<', '').replace('>', '') + '" <' + forwardFrom + '>' + "\r\n";
+	let formatter = email => {
+		let index = email.indexOf('<');
+		if (index > 0) {
+			email = email.slice(0, index).trim();
+		}
+		return email.replace(/"/g, '');
+	};
+
+	var headers = 'From: "' + formatter(originalFrom) + '" <' + forwardFrom + '>' + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + originalTo + "\r\n";
-	headers += 'To: "' + originalTo.replace('<', '').replace('>', '') + '" <' + forwardTo + '>' + "\r\n";
+	headers += 'To: "' + formatter(originalTo) + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
 	var headerDictionary = {};

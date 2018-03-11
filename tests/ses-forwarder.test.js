@@ -32,13 +32,12 @@ describe('src/ses-forwarder.js', function() {
 	});
 	describe('Handler', function() {
 		it('', function(done) {
-			var expectedMessage = `From: no-reply@warrenparad.net\r
+			var expectedMessage = `From: "UnitTestSender@unittent.com" <no-reply@warrenparad.net>\r
 Reply-To: UnitTestSender@unittent.com\r
 X-Original-To: 20170101@unittest.net\r
-To: wparad@gmail.com\r
-Subject: UnitTest Subject (UnitTe)\r
+To: "20170101@unittest.net" <wparad@gmail.com>\r
+Subject: UnitTest Subject\r
 \r
-(FROM: UnitTestSender@unittent.com, TO: 20170101@unittest.net)\r
 This is the body.`;
 			var fw = require('../src/ses-forwarder');
 			fw.handler({
@@ -55,8 +54,11 @@ This is the body.`;
 				sendRawEmail: function(options) {
 					if (options.RawMessage === null) { return Promise.reject('Message not defined.'); }
 					if (options.RawMessage.Data === null) { return Promise.reject('Message not defined.'); }
-					console.log(options.RawMessage.Data);
-					assert.equal(options.RawMessage.Data, expectedMessage, "Email message does not match");
+					if (options.RawMessage.Data !== expectedMessage) {
+						console.log(options.RawMessage.Data);
+						console.log(expectedMessage);
+						assert.isTrue(false, 'Email message does not match');
+					}
 					return { promise: () => Promise.resolve() };
 				}
 			}, {
