@@ -17,6 +17,7 @@ exports.handler = function(s3client, sesClient, event) {
 	}
 
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
+	var toList = msgInfo.mail.commonHeaders.to.join(', ');
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
 	for(let index in msgInfo.mail.commonHeaders.to)
 	{
@@ -36,7 +37,7 @@ exports.handler = function(s3client, sesClient, event) {
 
 	var headers = 'From: "' + formatter(originalFrom) + '" <' + forwardFrom + '>' + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
-	headers += "X-Original-To: " + originalTo + "\r\n";
+	headers += "X-Original-To: " + toList + "\r\n";
 	headers += 'To: "' + formatter(originalTo) + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
