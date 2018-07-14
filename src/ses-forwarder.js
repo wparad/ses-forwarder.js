@@ -19,6 +19,7 @@ exports.handler = function(s3client, sesClient, event) {
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
 	var toList = msgInfo.mail.commonHeaders.to.join(', ');
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
+	var amzToList = msgInfo.receipt.recipients.join(', ');
 	for(let index in msgInfo.mail.commonHeaders.to)
 	{
 		let toName = msgInfo.mail.commonHeaders.to[index].split('@')[0];
@@ -38,9 +39,17 @@ exports.handler = function(s3client, sesClient, event) {
 	var headers = 'From: "' + formatter(originalFrom) + '" <' + forwardFrom + '>' + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + toList + "\r\n";
+	headers += "X-AMZ-To: " + amzToList + "\r\n";
 	headers += "X-AMZ-Id: " + msgInfo.mail.messageId + "\r\n";
+	if (msgInfo.mail.destination.length > 0) {
+		headers += 'X-SES-Destination: ' + msgInfo.mail.destination.join(', ')  + "\r\n";
+	}
 	headers += 'To: "' + formatter(originalTo) + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
+
+	headers += "X-AMZ-Validation-SPF: " + msgInfo.receipt.spfVerdict.status + "\r\n";
+	headers += "X-AMZ-Validation-DKIM: " + msgInfo.receipt.dkimVerdict.status + "\r\n";
+	headers += "X-AMZ-Validation-DMARC: " + msgInfo.receipt.dmarcVerdict.status + "\r\n";
 
 	var headerDictionary = {};
 	msgInfo.mail.headers.map(pair => headerDictionary[pair.name] = pair.value );
