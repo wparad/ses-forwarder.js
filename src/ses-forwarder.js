@@ -38,6 +38,7 @@ exports.handler = function(s3client, sesClient, event) {
 	var headers = 'From: "' + formatter(originalFrom) + '" <' + forwardFrom + '>' + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + toList + "\r\n";
+	headers += "X-AMZ-Id: " + msgInfo.mail.messageId + "\r\n";
 	headers += 'To: "' + formatter(originalTo) + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
