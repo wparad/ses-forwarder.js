@@ -18,6 +18,11 @@ exports.handler = function(s3client, sesClient, event) {
 
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
 	var toList = msgInfo.mail.commonHeaders.to.join(', ');
+
+	if (originalFrom.match('k_ngui1@dds.com')) {
+		return Promise.resolve('Blocked email address found');
+	}
+
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
 	var amzToList = msgInfo.receipt.recipients.join(', ');
 	for(let index in msgInfo.mail.commonHeaders.to)
