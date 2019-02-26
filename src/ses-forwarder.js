@@ -19,7 +19,7 @@ exports.handler = function(s3client, sesClient, event) {
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
 	var toList = msgInfo.mail.commonHeaders.to.join(', ');
 
-	if (originalFrom.match('k_ngui1@dds.com')) {
+	if (originalFrom.match('k_ngui1@dds.com') || originalFrom.match('Mrs Karen Ngui')) {
 		return Promise.resolve('Blocked email address found');
 	}
 
