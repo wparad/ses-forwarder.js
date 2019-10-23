@@ -25,10 +25,10 @@ var apiOptions = {
 	sourceDirectory: path.join(__dirname, 'src'),
 	description: 'This is the description of the lambda function',
 	regions: ['us-east-1'],
-	runtime: 'nodejs6.10',
+	runtime: 'nodejs10.x',
 	memorySize: 128,
 	publish: true,
-	timeout: 10,
+	timeout: 30,
 	securityGroupIds: [],
 	subnetIds: []
 };
@@ -69,18 +69,6 @@ commander
 		awsArchitect.PublishPromise()
 		.then((result) => console.log(`${JSON.stringify(result, null, 2)}`))
 		.catch((failure) => console.log(`${failure.Details} - ${JSON.stringify(failure, null, 2)}`));
-
-		// var databaseSchema = [
-		// 	{
-		// 		TableName: 'Email',
-		// 		AttributeDefinitions: [{ AttributeName: 'EmailId', AttributeType: 'S' }],
-		// 		KeySchema: [{ AttributeName: 'EmailId', KeyType: 'HASH' }],
-		// 		ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 }
-		// 	}
-		// ];
-		// awsArchitect.PublishDatabasePromise('prod', databaseSchema)
-		// .then((result) => console.log(`${JSON.stringify(result, null, 2)}`))
-		// .catch((failure) => console.log(`${failure.Details} - ${JSON.stringify(failure, null, 2)}`));
 	});
 
 commander.on('*', () => {

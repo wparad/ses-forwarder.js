@@ -5,6 +5,7 @@ const assert = require('chai').assert;
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
+const { expect } = require('chai');
 
 describe('src/ses-forwarder.js', function() {
 	describe('Syntax', function () {
@@ -149,7 +150,7 @@ This is the body.`;
 				]
 			})
 			.then(result => {
-				if (result === 'Skipping, due to outdated email address.') { done(); }
+				if (expect(result).to.eql(['Skipping, due to outdated email address.'])) { done(); }
 				else { done(`Should have skipped email because it is outdated.`); }
 			})
 			.catch((failure) => done(failure));

@@ -7,10 +7,15 @@ const forwardTo = 'wparad@gmail.com';
 const bucket = 'email.warrenparad.net';
 
 exports.handler = function(s3client, sesClient, event) {
-	if(event.Records[0].eventSource !== 'aws:ses'  || event.Records[0].eventVersion !== '1.0') {
-		throw Error('Message is not of the correct versioning "aws:ses" (1.0).')
+	return Promise.all(event.Records.map(r => handleRecord(s3client, sesClient, r)));
+};
+
+function handleRecord(s3client, sesClient, record) {
+	if(record.eventSource !== 'aws:ses'  || record.eventVersion !== '1.0') {
+		console.error('Message is not of the correct versioning "aws:ses" (1.0).');
 	}
-	var msgInfo = event.Records[0].ses;
+
+	var msgInfo = record.ses;
 	// don't process spam messages
 	if (msgInfo.receipt.spamVerdict.status === 'FAIL' || msgInfo.receipt.virusVerdict.status === 'FAIL') {
 		return Promise.resolve('Message is spam or contains virus, ignoring.')
