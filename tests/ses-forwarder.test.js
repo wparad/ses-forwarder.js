@@ -9,17 +9,6 @@ const { expect } = require('chai');
 
 describe('src/ses-forwarder.js', function() {
 	describe('Syntax', function () {
-		it('Should be valid Javascript', function() {
-			try {
-				var userStringToTest = fs.readFileSync(path.resolve('src/ses-forwarder.js'));
-				esprima.parse(userStringToTest);
-				assert(true);
-			}
-			catch(e) {
-				console.log(e.stack);
-				assert(false, e.toString());
-			}
-		});
 		it('Should be valid node', function(){
 			try {
 				var app = require('../src/ses-forwarder');
@@ -150,7 +139,7 @@ This is the body.`;
 				]
 			})
 			.then(result => {
-				if (expect(result).to.eql(['Skipping, due to outdated email address.'])) { done(); }
+				if (expect(result).to.eql({ disposition: 'CONTINUE' })) { done(); }
 				else { done(`Should have skipped email because it is outdated.`); }
 			})
 			.catch((failure) => done(failure));

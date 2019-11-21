@@ -7,18 +7,19 @@ const forwardTo = 'wparad@gmail.com';
 const bucket = 'email.warrenparad.net';
 
 exports.handler = function(s3client, sesClient, event) {
-	return Promise.all(event.Records.map(r => handleRecord(s3client, sesClient, r)));
+	return handleRecord(s3client, sesClient, event.Records[0]);
 };
 
-function handleRecord(s3client, sesClient, record) {
+async function handleRecord(s3client, sesClient, record) {
 	if(record.eventSource !== 'aws:ses'  || record.eventVersion !== '1.0') {
 		console.error('Message is not of the correct versioning "aws:ses" (1.0).');
+		return { "disposition" : "STOP_RULE" };
 	}
 
 	var msgInfo = record.ses;
 	// don't process spam messages
 	if (msgInfo.receipt.spamVerdict.status === 'FAIL' || msgInfo.receipt.virusVerdict.status === 'FAIL') {
-		return Promise.resolve('Message is spam or contains virus, ignoring.')
+		return { "disposition" : "CONTINUE" }
 	}
 
 	const spf = msgInfo.receipt.spfVerdict && msgInfo.receipt.spfVerdict.status;
@@ -27,14 +28,14 @@ function handleRecord(s3client, sesClient, record) {
 	const failCount = +(spf === 'FAIL') +(dkim === 'FAIL') +(dmarc === 'FAIL');
 	const passCount = +(spf === 'PASS') +(dkim === 'PASS') +(dmarc === 'PASS');
 	if (failCount > 1 && !passCount) {
-		return Promise.resolve('Message failed some simple validation checks');
+		return { "disposition" : "CONTINUE" }
 	}
 
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
 	var toList = msgInfo.mail.commonHeaders.to.join(', ');
 
 	if (originalFrom.match('k_ngui1@dds.com') || originalFrom.match('Mrs Karen Ngui')) {
-		return Promise.resolve('Blocked email address found');
+		return { "disposition" : "CONTINUE" }
 	}
 
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
@@ -43,7 +44,7 @@ function handleRecord(s3client, sesClient, record) {
 	{
 		let toName = msgInfo.mail.commonHeaders.to[index].split('@')[0];
 		if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
-			return Promise.resolve('Skipping, due to outdated email address.')
+			return { "disposition" : "CONTINUE" }
 		}
 	}
 
@@ -77,26 +78,23 @@ function handleRecord(s3client, sesClient, record) {
 	if(headerDictionary['Content-Transfer-Encoding']) { headers += 'Content-Transfer-Encoding: ' + headerDictionary['Content-Transfer-Encoding'] + '\r\n'; }
 	if(headerDictionary['MIME-Version']) { headers += 'MIME-Version: ' + headerDictionary['MIME-Version'] + '\r\n'; }
 
-	return s3client.getObject({
-		Bucket: bucket,
-		Key: msgInfo.mail.messageId
-	}).promise()
-	.then(result => {
+	try {
+		const result = await s3client.getObject({ Bucket: bucket, Key: msgInfo.mail.messageId }).promise();
 		var email = result.Body.toString();
+		let combinedEmail;
 		if (email) {
 			var splitEmail = email.split("\r\n\r\n");
 			splitEmail.shift();
-			return headers + "\r\n" + splitEmail.join("\r\n\r\n");
+			combinedEmail = headers + "\r\n" + splitEmail.join("\r\n\r\n");
 		}
 		else {
-			return headers + "\r\n" + "Empty email";
+			combinedEmail = headers + "\r\n" + "Empty email";
 		}
-	})
-	.then(email => {
-		return sesClient.sendRawEmail({ RawMessage: { Data: email } }).promise()
-		.catch((failure) => {
-			console.error(`Failed to send email: ${failure}`);
-			return Promise.reject(failure);
-		});
-	});
+
+		await sesClient.sendRawEmail({ RawMessage: { Data: combinedEmail } }).promise();
+		return { "disposition" : "STOP_RULE" };
+	} catch (failure) {
+		console.error(`Failed to send email: ${failure}`);
+		throw failure;
+	}
 };

@@ -7,17 +7,6 @@ var path = require('path');
 
 describe('src/index.js', function() {
 	describe('Syntax', function () {
-		it('Should be valid Javascript', function() {
-			try {
-				var userStringToTest = fs.readFileSync(path.resolve('src/index.js'));
-				esprima.parse(userStringToTest);
-				assert(true);
-			}
-			catch(e) {
-				console.log(e.stack);
-				assert(false, e.toString());
-			}
-		});
 		it('Should be valid node', function(){
 			try {
 				var app = require('../src/index');
