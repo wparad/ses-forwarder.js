@@ -40,10 +40,9 @@ async function handleRecord(s3client, sesClient, record) {
 
 	var originalTo = msgInfo.mail.commonHeaders.to[0];
 	var amzToList = (msgInfo.receipt.recipients || []).join(', ');
-	for(let index in msgInfo.mail.commonHeaders.to)
-	{
+	for(let index in msgInfo.mail.commonHeaders.to) {
 		let toName = msgInfo.mail.commonHeaders.to[index].split('@')[0];
-		if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
+		if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment() || toName.match(/rfc.warrenparad.net/)) {
 			return { "disposition" : "CONTINUE" }
 		}
 	}
