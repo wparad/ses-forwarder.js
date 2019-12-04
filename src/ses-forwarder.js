@@ -38,11 +38,14 @@ async function handleRecord(s3client, sesClient, record) {
 		return { "disposition" : "CONTINUE" }
 	}
 
-	var originalTo = msgInfo.mail.commonHeaders.to[0];
 	var amzToList = (msgInfo.receipt.recipients || []).join(', ');
+	if (amzToList.match(/rfc@warrenparad.net/)) {
+		return { "disposition" : "CONTINUE" }
+	}
+
 	for(let index in msgInfo.mail.commonHeaders.to) {
 		let toName = msgInfo.mail.commonHeaders.to[index].split('@')[0];
-		if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment() || msgInfo.mail.commonHeaders.to[index].match(/rfc@warrenparad.net/)) {
+		if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
 			return { "disposition" : "CONTINUE" }
 		}
 	}
@@ -63,6 +66,8 @@ async function handleRecord(s3client, sesClient, record) {
 	if (msgInfo.mail.destination && msgInfo.mail.destination.length > 0) {
 		headers += 'X-SES-Destination: ' + msgInfo.mail.destination.join(', ')  + "\r\n";
 	}
+
+	var originalTo = msgInfo.mail.commonHeaders.to[0];
 	headers += 'To: "' + formatter(originalTo) + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
