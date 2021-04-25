@@ -6,6 +6,10 @@ const forwardFrom = 'no-reply@warrenparad.net';
 const forwardTo = 'wparad@gmail.com';
 const bucket = 'email.warrenparad.net';
 
+const blockedTags = {
+	'biologicaldiversity': true
+};
+
 exports.handler = function(s3client, sesClient, event) {
 	return handleRecord(s3client, sesClient, event.Records[0]);
 };
@@ -45,7 +49,7 @@ async function handleRecord(s3client, sesClient, record) {
 
 	for(let index in msgInfo.mail.commonHeaders.to) {
 		let toName = msgInfo.mail.commonHeaders.to[index].split('@')[0];
-		if (toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
+		if (blockedTags[toName.toLowerCase()] || toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
 			return { "disposition" : "CONTINUE" }
 		}
 	}
