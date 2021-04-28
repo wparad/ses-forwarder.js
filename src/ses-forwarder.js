@@ -7,7 +7,8 @@ const forwardTo = 'wparad@gmail.com';
 const bucket = 'email.warrenparad.net';
 
 const blockedTags = {
-	'biologicaldiversity': true
+	'biologicaldiversity': true,
+	'shelling': true
 };
 
 exports.handler = function(s3client, sesClient, event) {
