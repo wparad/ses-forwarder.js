@@ -8,6 +8,7 @@ const bucket = 'email.warrenparad.net';
 
 const blockedTags = {
 	'biologicaldiversity': true,
+	'fastaction': true,
 	'clickup': true, // clickup.com
 	'shelling': true
 };
