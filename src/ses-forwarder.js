@@ -39,7 +39,8 @@ async function handleRecord(s3client, sesClient, record) {
 	}
 
 	var originalFrom = msgInfo.mail.commonHeaders.from[0];
-	var toList = msgInfo.mail.commonHeaders.to.join(', ');
+	const mappedTo = msgInfo.mail.commonHeaders.to || msgInfo.receipt.recipients || [];
+	var toList = mappedTo.join(', ');
 
 	if (originalFrom.match('k_ngui1@dds.com') || originalFrom.match('Mrs Karen Ngui')) {
 		return { "disposition" : "CONTINUE" }
@@ -50,8 +51,8 @@ async function handleRecord(s3client, sesClient, record) {
 		return { "disposition" : "CONTINUE" }
 	}
 
-	for(let index in msgInfo.mail.commonHeaders.to) {
-		let toName = msgInfo.mail.commonHeaders.to[index].split('@')[0];
+	for(let index in mappedTo) {
+		let toName = mappedTo[index].split('@')[0];
 		if (blockedTags[toName.toLowerCase()] || toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
 			return { "disposition" : "CONTINUE" }
 		}
@@ -74,7 +75,7 @@ async function handleRecord(s3client, sesClient, record) {
 		headers += 'X-SES-Destination: ' + msgInfo.mail.destination.join(', ')  + "\r\n";
 	}
 
-	var originalTo = msgInfo.mail.commonHeaders.to[0];
+	var originalTo = mappedTo[0];
 	headers += 'To: "' + formatter(originalTo) + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
