@@ -46,13 +46,14 @@ async function handleRecord(s3client, sesClient, record) {
 		return { "disposition" : "CONTINUE" }
 	}
 
-	var amzToList = (msgInfo.receipt.recipients || []).join(', ');
-	if (amzToList.match(/rfc@warrenparad.net/)) {
+	var amzToList = (msgInfo.receipt.recipients || []);
+	const amzToListString = amzToList.join(', ');
+	if (amzToListString.match(/rfc@warrenparad.net/)) {
 		return { "disposition" : "CONTINUE" }
 	}
 
-	for(let index in mappedTo) {
-		let toName = mappedTo[index].split('@')[0];
+	for(const email of amzToList) {
+		let toName = email.split('@')[0];
 		if (blockedTags[toName.toLowerCase()] || toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
 			return { "disposition" : "CONTINUE" }
 		}
@@ -69,7 +70,7 @@ async function handleRecord(s3client, sesClient, record) {
 	var headers = 'From: "' + formatter(originalFrom) + '" <' + forwardFrom + '>' + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + toList + "\r\n";
-	headers += "X-AMZ-To: " + amzToList + "\r\n";
+	headers += "X-AMZ-To: " + amzToListString + "\r\n";
 	headers += "X-AMZ-Id: " + msgInfo.mail.messageId + "\r\n";
 	if (msgInfo.mail.destination && msgInfo.mail.destination.length > 0) {
 		headers += 'X-SES-Destination: ' + msgInfo.mail.destination.join(', ')  + "\r\n";
