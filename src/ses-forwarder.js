@@ -10,7 +10,8 @@ const blockedTags = {
 	'biologicaldiversity': true,
 	'fastaction': true,
 	'clickup': true, // clickup.com
-	'shelling': true
+	'shelling': true,
+	'lambdatest': true // lambdatest.com
 };
 
 exports.handler = function(s3client, sesClient, event) {
