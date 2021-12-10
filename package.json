@@ -14,14 +14,15 @@
     "openapi-factory": "^2.0"
   },
   "devDependencies": {
-    "aws-architect": "^3.3.199",
-    "aws-sdk": "^2.814.0",
+    "aws-architect": "^6.6.16",
+    "aws-sdk": "^2.1046.0",
     "chai": "^3.2.0",
     "ci-build-tools": "^1.0.9",
     "commander": "^2.5.0",
     "esprima": "^2.7.2",
     "glob": "^5.0.0",
     "mocha": "^5.0.4",
+    "nodemon": "^2.0.15",
     "sinon": "^1.17.1"
   },
   "repository": {
