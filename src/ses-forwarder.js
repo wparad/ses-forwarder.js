@@ -1,10 +1,10 @@
-'use strict';
-
 const moment = require('moment');
+
+const logger = require('./logger');
 
 const forwardFrom = 'no-reply@warrenparad.net';
 const forwardTo = 'wparad@gmail.com';
-const bucket = 'email.warrenparad.net';
+const bucket = process.env.BucketName;
 
 const blockedTags = {
 	'biologicaldiversity': true,
@@ -14,8 +14,11 @@ const blockedTags = {
 	'lambdatest': true // lambdatest.com
 };
 
-exports.handler = function(s3client, sesClient, event) {
-	return handleRecord(s3client, sesClient, event.Records[0]);
+exports.handler = async function(s3client, sesClient, event) {
+  logger.log({ title: 'Starting email handling' });
+	const result = await handleRecord(s3client, sesClient, event.Records[0]);
+  logger.log({ title: 'Result: ', result });
+  return result;
 };
 
 async function handleRecord(s3client, sesClient, record) {
@@ -93,7 +96,7 @@ async function handleRecord(s3client, sesClient, record) {
 	if(headerDictionary['MIME-Version']) { headers += 'MIME-Version: ' + headerDictionary['MIME-Version'] + '\r\n'; }
 
 	try {
-		const result = await s3client.getObject({ Bucket: bucket, Key: msgInfo.mail.messageId }).promise();
+		const result = await s3client.getObject({ Bucket: bucket, Key: `Incoming/${msgInfo.mail.messageId}` }).promise();
 		var email = result.Body.toString();
 		let combinedEmail;
 		if (email) {

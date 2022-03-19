@@ -1,5 +1,5 @@
 {
-  "name": "ses-forwarder",
+  "name": "SES-Forwarder",
   "version": "0.0.0",
   "description": "Description of the package",
   "main": "index.js",
@@ -10,20 +10,35 @@
     "test": "mocha tests/**/*.js -R spec"
   },
   "dependencies": {
-    "moment": "^2.18.1",
-    "openapi-factory": "^2.0"
+    "axios": "^0.26.1",
+    "error-object-polyfill": "^1.1.14",
+    "json-stringify-safe": "^5.0.1",
+    "mailparser": "^3.4.0",
+    "moment": "^2.29.1",
+    "openapi-factory": "^5.2.17",
+    "uuid": "^8.3.2",
+    "xml2js": "^0.4.23",
+    "yauzl": "^2.10.0"
   },
   "devDependencies": {
-    "aws-architect": "^6.6.16",
-    "aws-sdk": "^2.1046.0",
-    "chai": "^3.2.0",
-    "ci-build-tools": "^1.0.9",
-    "commander": "^2.5.0",
-    "esprima": "^2.7.2",
-    "glob": "^5.0.0",
-    "mocha": "^5.0.4",
-    "nodemon": "^2.0.15",
-    "sinon": "^1.17.1"
+    "@babel/core": "^7.15.8",
+    "@babel/eslint-parser": "^7.15.8",
+    "aws-architect": "^6.6.28",
+    "aws-sdk": "^2.930.0",
+    "chai": "^4.3.4",
+    "commander": "^8.3.0",
+    "eslint": "^7.20.0",
+    "eslint-config-cimpress-atsquad": "^1.0.67",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-mocha": "^8.0.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.6",
+    "mocha": "^8.3.0",
+    "nodemon": "^2.0.6",
+    "sinon": "^11.1.1",
+    "sinon-chai": "^3.7.0"
   },
   "repository": {
     "type": "git",
