@@ -3,7 +3,7 @@ const moment = require('moment');
 const logger = require('./logger');
 
 const forwardFrom = 'no-reply@warrenparad.net';
-const forwardTo = 'wparad@gmail.com';
+const forwardTo = process.env.WARRENS_PERSONAL_EMAIL;
 const bucket = process.env.BucketName;
 
 const blockedTags = {
@@ -74,7 +74,7 @@ async function handleRecord(s3client, sesClient, record) {
 	var headers = 'From: "' + formatter(originalFrom) + '" <' + forwardFrom + '>' + "\r\n";
 	headers += "Reply-To: " + originalFrom + "\r\n";
 	headers += "X-Original-To: " + toList + "\r\n";
-	headers += "X-AMZ-To: " + amzToListString + "\r\n";
+	if (amzToListString) { headers += "X-AMZ-To: " + amzToListString + "\r\n"; }
 	headers += "X-AMZ-Id: " + msgInfo.mail.messageId + "\r\n";
 	if (msgInfo.mail.destination && msgInfo.mail.destination.length > 0) {
 		headers += 'X-SES-Destination: ' + msgInfo.mail.destination.join(', ')  + "\r\n";
@@ -84,9 +84,9 @@ async function handleRecord(s3client, sesClient, record) {
 	headers += 'To: "' + formatter(originalTo) + '" <' + forwardTo + '>' + "\r\n";
 	headers += "Subject: " + msgInfo.mail.commonHeaders.subject + "\r\n";
 
-	headers += "X-AMZ-Validation-SPF: " + spf + "\r\n";
-	headers += "X-AMZ-Validation-DKIM: " + dkim + "\r\n";
-	headers += "X-AMZ-Validation-DMARC: " + dmarc + "\r\n";
+	if (spf !== undefined) { headers += "X-AMZ-Validation-SPF: " + spf + "\r\n"; }
+	if (dkim !== undefined) { headers += "X-AMZ-Validation-DKIM: " + dkim + "\r\n"; }
+	if (dmarc !== undefined) { headers += "X-AMZ-Validation-DMARC: " + dmarc + "\r\n"; }
 
 	var headerDictionary = {};
 	msgInfo.mail.headers.map(pair => headerDictionary[pair.name] = pair.value );

@@ -11,7 +11,7 @@ var event = {
             "ses": {
                 "mail": {
                     "timestamp": "2017-01-20T13:33:58.861Z",
-                    "source": "wparad@gmail.com",
+                    "source": `${process.env.WARRENS_PERSONAL_EMAIL}`,
                     "messageId": "3rk0d94itfc2i7u0sllkseg61nm8jej40i61s801",
                     "destination": [
                         "wparad@vortex.link"
@@ -20,7 +20,7 @@ var event = {
                     "headers": [
                         {
                             "name": "Return-Path",
-                            "value": "<wparad@gmail.com>"
+                            "value": `<${process.env.WARRENS_PERSONAL_EMAIL}>`
                         },
                         {
                             "name": "X-SES-Spam-Verdict",
@@ -48,9 +48,9 @@ var event = {
                         }
                     ],
                     "commonHeaders": {
-                        "returnPath": "wparad@gmail.com",
+                        "returnPath": `${process.env.WARRENS_PERSONAL_EMAIL}`,
                         "from": [
-                            "Warren Parad <wparad@gmail.com>"
+                            `Warren Parad <${process.env.WARRENS_PERSONAL_EMAIL}>`
                         ],
                         "date": "Fri, 20 Jan 2017 08:33:16 -0500",
                         "to": [

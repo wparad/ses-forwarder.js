@@ -84,8 +84,8 @@ commander
   });
 
 commander.on('*', () => {
-  if(commander.args.join(' ') == 'tests/**/*.js') { return; }
-  console.log('Unknown Command: ' + commander.args.join(' '));
+  if (commander.args.join(' ') === "'tests/**/*.js'") { return; }
+  console.log(`Unknown Command: ${commander.args.join(' ')}`);
   commander.help();
   process.exit(0);
 });

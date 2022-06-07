@@ -21,11 +21,12 @@ describe('src/ses-forwarder.js', function() {
 		});
 	});
 	describe('Handler', function() {
-		it('', function(done) {
+		it('default handler test', function(done) {
 			var expectedMessage = `From: "UnitTestSender@unittent.com" <no-reply@warrenparad.net>\r
 Reply-To: UnitTestSender@unittent.com\r
 X-Original-To: 20170101@unittest.net\r
-To: "20170101@unittest.net" <wparad@gmail.com>\r
+X-AMZ-Id: UnitTestId-0000\r
+To: "20170101@unittest.net" <${process.env.WARRENS_PERSONAL_EMAIL}>\r
 Subject: UnitTest Subject\r
 \r
 This is the body.`;
@@ -116,7 +117,10 @@ This is the body.`;
 								},
 								virusVerdict: {
 									status: 'PASS'
-								}
+								},
+                recipients: [
+                  `${moment().add(-32, 'days').format('YYYYMMDD')}@unittest.net`
+                ]
 							},
 							mail: {
 								commonHeaders: {
