@@ -14,7 +14,7 @@
     "error-object-polyfill": "^1.1.14",
     "json-stringify-safe": "^5.0.1",
     "mailparser": "^3.4.0",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "openapi-factory": "^5.2.17",
     "uuid": "^8.3.2",
     "xml2js": "^0.4.23",
