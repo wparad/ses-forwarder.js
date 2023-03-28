@@ -8,7 +8,6 @@ const bucket = process.env.BucketName;
 
 const blockedTags = {
 	'biologicaldiversity': true,
-	'fastaction': true,
 	'clickup': true, // clickup.com
 	'shelling': true,
 	'lambdatest': true // lambdatest.com
