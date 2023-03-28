@@ -16,7 +16,7 @@ const blockedTags = {
 exports.handler = async function(s3client, sesClient, event) {
   logger.log({ title: 'Starting email handling' });
 	const result = await handleRecord(s3client, sesClient, event.Records[0]);
-  logger.log({ title: 'Result: ', result });
+  logger.log({ title: 'Result: ', result, messageId: event.Records[0].ses.mail.messageId });
   return result;
 };
 
