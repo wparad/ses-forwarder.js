@@ -57,7 +57,7 @@ async function handleRecord(s3client, sesClient, record) {
 
 	for(const email of amzToList) {
 		let toName = email.split('@')[0];
-		if (blockedTags[toName.toLowerCase()] || toName.match(/^\d{8}$/) && moment(toName, "YYYYMMDD").add(31, "days") < moment()) {
+		if (blockedTags[toName.toLowerCase()] || toName.match(/^[-\d]{8,}$/) && moment(toName.replace(/-/g, ''), "YYYYMMDD").add(31, "days") < moment()) {
 			return { "disposition" : "CONTINUE" }
 		}
 	}
