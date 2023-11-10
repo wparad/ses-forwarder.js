@@ -10,7 +10,7 @@
     "test": "mocha tests/**/*.js -R spec"
   },
   "dependencies": {
-    "axios": "^0.26.1",
+    "axios": "^1.6.0",
     "error-object-polyfill": "^1.1.14",
     "json-stringify-safe": "^5.0.1",
     "mailparser": "^3.4.0",
