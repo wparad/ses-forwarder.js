@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1691.0",
-    "axios": "^0.26.1",
     "error-object-polyfill": "^1.1.14",
     "json-stringify-safe": "^5.0.1",
     "mailparser": "^3.4.0",
