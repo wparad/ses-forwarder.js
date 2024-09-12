@@ -1,26 +1,22 @@
-'use strict;'
-const esprima = require('esprima');
 const mocha = require('mocha');
-const assert = require('chai').assert;
-const fs = require('fs');
-const path = require('path');
-const moment = require('moment');
 const { expect } = require('chai');
+const fs = require('fs');
 
-describe('src/ses-forwarder.js', function() {
-	describe('Syntax', function () {
-		it('Should be valid node', function(){
+const moment = require('moment');
+
+describe('src/ses-forwarder.js', () =>  {
+	describe('Syntax', () => {
+		it('Should be valid node', () => {
 			try {
 				var app = require('../src/ses-forwarder');
-				assert(true);
 			}
 			catch(e) {
 				console.log(e.stack);
-				assert(false, e.toString());
+				expect(e).to.eql(null, e.toString());
 			}
 		});
 	});
-	describe('Handler', function() {
+	describe('Handler', () =>  {
 		it('default handler test', function(done) {
 			var expectedMessage = `From: "UnitTestSender@unittent.com" <no-reply@warrenparad.net>\r
 Reply-To: UnitTestSender@unittent.com\r
@@ -48,7 +44,7 @@ This is the body.`;
 					if (options.RawMessage.Data !== expectedMessage) {
 						console.log(options.RawMessage.Data);
 						console.log(expectedMessage);
-						assert.isTrue(false, 'Email message does not match');
+						expect(false).to.eql(true, 'Email message does not match');
 					}
 					return { promise: () => Promise.resolve() };
 				}

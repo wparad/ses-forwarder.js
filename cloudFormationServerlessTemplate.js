@@ -77,7 +77,7 @@ module.exports = {
             FunctionName: { Ref: 'serviceName' },
             Description: { Ref: 'serviceDescription' },
             Handler: 'index.handler',
-            Runtime: 'nodejs16.x',
+            Runtime: 'nodejs18.x',
             TracingConfig: {
               Mode: 'Active'
             },

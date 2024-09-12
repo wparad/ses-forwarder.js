@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Description of the package",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node make.js run",
     "build": "node make.js",
@@ -10,6 +11,7 @@
     "test": "mocha tests/**/*.js -R spec"
   },
   "dependencies": {
+    "aws-sdk": "^2.1691.0",
     "axios": "^0.26.1",
     "error-object-polyfill": "^1.1.14",
     "json-stringify-safe": "^5.0.1",
@@ -23,22 +25,21 @@
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/eslint-parser": "^7.15.8",
-    "aws-architect": "^6.6.28",
-    "aws-sdk": "^2.930.0",
-    "chai": "^4.3.4",
+    "aws-architect": "^6.7.102",
+    "chai": "^4",
     "commander": "^8.3.0",
     "eslint": "^7.20.0",
     "eslint-config-cimpress-atsquad": "^1.0.67",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-mocha": "^8.0.0",
+    "eslint-plugin-mocha": "^10.5.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-promise": "^7.1.0",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "mocha": "^10.1.0",
     "nodemon": "^2.0.6",
-    "sinon": "^11.1.1",
-    "sinon-chai": "^3.7.0"
+    "sinon": "^18.0.1",
+    "sinon-chai": "^3.0.0"
   },
   "repository": {
     "type": "git",
