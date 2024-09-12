@@ -12,11 +12,10 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1691.0",
-    "error-object-polyfill": "^1.1.14",
+    "error-object-polyfill": "^1.2.39",
     "json-stringify-safe": "^5.0.1",
-    "mailparser": "^3.4.0",
     "moment": "^2.29.4",
-    "openapi-factory": "^5.2.17",
+    "openapi-factory": "^5.4.85",
     "uuid": "^8.3.2",
     "xml2js": "^0.5.0",
     "yauzl": "^2.10.0"
@@ -29,7 +28,7 @@
     "commander": "^8.3.0",
     "eslint": "^7.20.0",
     "eslint-config-cimpress-atsquad": "^1.0.67",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-mocha": "^10.5.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^7.1.0",
