@@ -1,33 +1,25 @@
-const mocha = require('mocha');
+const { describe, it, beforeEach, afterEach } = require('mocha');
 const { expect } = require('chai');
-const fs = require('fs');
+const sinon = require('sinon');
 
-const moment = require('moment');
+const { DateTime } = require('luxon');
+
+const fw = require('../src/ses-forwarder');
+const logger = require('../src/logger');
+
+let sandbox;
+beforeEach(() => { sandbox = sinon.createSandbox(); });
+afterEach(() => sandbox.restore());
 
 describe('src/ses-forwarder.js', () =>  {
-	describe('Syntax', () => {
-		it('Should be valid node', () => {
-			try {
-				var app = require('../src/ses-forwarder');
-			}
-			catch(e) {
-				console.log(e.stack);
-				expect(e).to.eql(null, e.toString());
-			}
-		});
-	});
 	describe('Handler', () =>  {
-		it('default handler test', function(done) {
-			var expectedMessage = `From: "UnitTestSender@unittent.com" <no-reply@warrenparad.net>\r
-Reply-To: UnitTestSender@unittent.com\r
-X-Original-To: 20170101@unittest.net\r
-X-AMZ-Id: UnitTestId-0000\r
-To: "20170101@unittest.net" <${process.env.WARRENS_PERSONAL_EMAIL}>\r
-Subject: UnitTest Subject\r
-\r
-This is the body.`;
-			var fw = require('../src/ses-forwarder');
-			fw.handler({
+		it('default handler test', async () => {
+			var expectedMessage = `X-SES-Sender-S3-Object-Id: UnitTestId-0000\r\nX-SES-Original-Lambda-Event: eyJldmVudFNvdXJjZSI6ImF3czpzZXMiLCJldmVudFZlcnNpb24iOiIxLjAiLCJzZXMiOnsicmVjZWlwdCI6eyJzcGFtVmVyZGljdCI6eyJzdGF0dXMiOiJQQVNTIn0sInZpcnVzVmVyZGljdCI6eyJzdGF0dXMiOiJQQVNTIn19LCJtYWlsIjp7ImNvbW1vbkhlYWRlcnMiOnsiZnJvbSI6WyJVbml0VGVzdFNlbmRlckB1bml0dGVudC5jb20iXSwidG8iOlsiMjAxNzAxMDFAdW5pdHRlc3QubmV0Il0sInN1YmplY3QiOiJVbml0VGVzdCBTdWJqZWN0In0sImhlYWRlcnMiOltdLCJtZXNzYWdlSWQiOiJVbml0VGVzdElkLTAwMDAifX19\r\nTo: "20170101@unittest.net" <${process.env.WARRENS_PERSONAL_EMAIL}>\r\nSubject: UnitTest Subject\r\nFrom: "UnitTestSender@unittent.com" <no-reply@warrenparad.net>\r\nReply-To: UnitTestSender@unittent.com\r\nX-Original-To: 20170101@unittest.net\r\n\r\nThis is the body.`;
+
+			const mockLogger = sandbox.mock(logger);
+			mockLogger.expects('log').exactly(2);
+
+			await fw.handler({
 				getObject: function(options) {
 					if (options.Bucket === null) { return Promise.reject('Bucket not defined.'); }
 					if (options.Key === null) { return Promise.reject('Bucket object key not defined.'); }
@@ -39,13 +31,9 @@ This is the body.`;
 				}
 			}, {
 				sendRawEmail: function(options) {
-					if (options.RawMessage === null) { return Promise.reject('Message not defined.'); }
-					if (options.RawMessage.Data === null) { return Promise.reject('Message not defined.'); }
-					if (options.RawMessage.Data !== expectedMessage) {
-						console.log(options.RawMessage.Data);
-						console.log(expectedMessage);
-						expect(false).to.eql(true, 'Email message does not match');
-					}
+					expect(options.RawMessage).to.not.eql(null, 'Message not defined.');
+					expect(options.RawMessage.Data).to.not.eql(null, 'Message not defined.');
+					expect(options.RawMessage.Data).to.eql(expectedMessage, 'Email message does not match');
 					return { promise: () => Promise.resolve() };
 				}
 			}, {
@@ -81,13 +69,13 @@ This is the body.`;
 						}
 					}
 				]
-			})
-			.then(() => done())
-			.catch((failure) => done(failure));
+			});
 		});
-		it('Email address older than 1 month used', function(done) {
-			var fw = require('../src/ses-forwarder');
-			fw.handler({
+		it('Email address older than 1 month used', async () => {
+			const mockLogger = sandbox.mock(logger);
+			mockLogger.expects('log').exactly(2);
+
+			const result = await fw.handler({
 				getObject: function(options) {
 					if (options.Bucket === null) { return Promise.reject('Bucket not defined.'); }
 					if (options.Key === null) { return Promise.reject('Bucket object key not defined.'); }
@@ -99,7 +87,7 @@ This is the body.`;
 				}
 			}, {
 				sendRawEmail: function(options) {
-					return { promise: () => Promise.reject('Should never execute') };
+					return { promise: () => Promise.reject(Error('Should never execute')) };
 				}
 			}, {
 				Records: [
@@ -115,7 +103,7 @@ This is the body.`;
 									status: 'PASS'
 								},
                 recipients: [
-                  `${moment().add(-32, 'days').format('YYYYMMDD')}@unittest.net`
+                  `${DateTime.utc().plus({ days: -32 }).toFormat('yyyy-MM-dd')}@unittest.net`
                 ]
 							},
 							mail: {
@@ -124,7 +112,7 @@ This is the body.`;
 										'UnitTestSender@unittent.com'
 									],
 									to: [
-										`${moment().add(-32, 'days').format('YYYYMMDD')}@unittest.net`
+										`${DateTime.utc().plus({ days: -32 }).toFormat('yyyy-MM-dd')}@unittest.net`
 									],
 									subject: 'UnitTest Subject',
 
@@ -137,16 +125,15 @@ This is the body.`;
 						}
 					}
 				]
-			})
-			.then(result => {
-				if (expect(result).to.eql({ disposition: 'CONTINUE' })) { done(); }
-				else { done(`Should have skipped email because it is outdated.`); }
-			})
-			.catch((failure) => done(failure));
+			});
+
+			expect(result).to.eql({ disposition: 'CONTINUE' })
 		});
-		it('Email address newer than 1 month used', function(done) {
-			var fw = require('../src/ses-forwarder');
-			fw.handler({
+		it('Email address newer than 1 month used', async () => {
+			const mockLogger = sandbox.mock(logger);
+			mockLogger.expects('log').exactly(2);
+
+			const result = await fw.handler({
 				getObject: function(options) {
 					if (options.Bucket === null) { return Promise.reject('Bucket not defined.'); }
 					if (options.Key === null) { return Promise.reject('Bucket object key not defined.'); }
@@ -180,7 +167,7 @@ This is the body.`;
 										'UnitTestSender@unittent.com'
 									],
 									to: [
-										`${moment().add(-30, 'days').format('YYYYMMDD')}@unittest.net`
+										`${DateTime.utc().plus({ days: -30 }).toFormat('yyyy-MM-dd')}@unittest.net`
 									],
 									subject: 'UnitTest Subject',
 
@@ -193,12 +180,15 @@ This is the body.`;
 						}
 					}
 				]
-			})
-			.then(result => {
-				if (result !== 'Skipping, due to outdated email address.') { done(); }
-				else { done(`Should not have skipped email because it is new.`); }
-			})
-			.catch((failure) => done(failure));
+			});
+			
+			expect(result).to.not.eql('Skipping, due to outdated email address.');
+		});
+	});
+
+	describe('Validate my email address is still private', () => {
+		it('process.env.WARRENS_PERSONAL_EMAIL', async () => {
+			expect(process.env.WARRENS_PERSONAL_EMAIL).to.eql('');
 		});
 	});
 });

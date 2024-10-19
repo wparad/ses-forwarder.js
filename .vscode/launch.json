@@ -19,6 +19,15 @@
           "!**/node_modules/google-auth-library/**",
           "!**/node_modules/gtoken/**"
         ]
-      }
+      },
+      {
+        "type": "node-terminal",
+        "request": "launch",
+        "name": "Debug tests",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "command": "npm test"
+      },
     ]
   }

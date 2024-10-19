@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+      "target": "esnext",
+      "module": "commonjs",
+      "allowSyntheticDefaultImports": false
+    },
+    "exclude": [
+      "node_modules/aws-sdk/lib/credentials*"
+    ]
+  }
+  

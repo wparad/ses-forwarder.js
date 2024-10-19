@@ -89,7 +89,6 @@ var event = {
     ]
 };
 LambdaForwarder.handler(new aws.S3(), new aws.SES(), event)
-.then(() => { console.log('Successfully Processed Message'); }, failure => {
-    console.error('Failed to send email.');
-    console.error(failure);
+.then(() => { logger.log({ title: 'Successfully Processed Message' }); }, failure => {
+    logger.log({ title: 'Failed to send email.', failure });
 });
