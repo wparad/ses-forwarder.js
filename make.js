@@ -46,6 +46,10 @@ commander
     /****** */
     await fs.writeJson(packageMetadataFile, packageMetadata, { spaces: 2 });
 
+    if (!process.env.WARRENS_PERSONAL_EMAIL) {
+      throw Error('WARRENS_PERSONAL_EMAIL environment variable is not set.');
+    }
+
     const awsArchitect = new AwsArchitect(packageMetadata, apiOptions);
     const stackTemplateProvider = require('./cloudFormationServerlessTemplate');
     const stackTemplate = stackTemplateProvider.getStack();
