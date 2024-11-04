@@ -10,6 +10,16 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
+"@authress/eslint-config@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@authress/eslint-config/-/eslint-config-1.0.4.tgz#2b1ac20b2aa4f12501a59ab1239f7c32deea5bd2"
+  integrity sha512-YretZb7QSnk5XcdVPJWhhZUyaR1cSb2SSUY4DMDmfUgO3N96f17aAYjipXHB7hq9/LRultTr3U4Qoo8fA8JxAQ==
+  dependencies:
+    eslint ">=5.0.0"
+    eslint-plugin-mocha ">=5.0.0"
+    eslint-plugin-node ">=6.0.0"
+    eslint-plugin-promise ">=4.0.0"
+
 "@babel/code-frame@7.12.11":
   version "7.12.11"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.11.tgz#f4ad435aa263db935b8f10f2c552d23fb716a63f"

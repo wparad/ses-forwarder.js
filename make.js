@@ -1,23 +1,23 @@
 /**
  * Module dependencies
  */
-var fs = require('fs-extra');
-var path = require('path');
+let fs = require('fs-extra');
+let path = require('path');
 const aws = require('aws-sdk');
 const commander = require('commander');
 
-var AwsArchitect = require('aws-architect');
+let AwsArchitect = require('aws-architect');
 const version = `0.0.${process.env.CI_PIPELINE_ID || '0'}`;
 commander.version(version);
 
-var packageMetadataFile = path.join(__dirname, 'package.json');
-var packageMetadata = require(packageMetadataFile);
+let packageMetadataFile = path.join(__dirname, 'package.json');
+let packageMetadata = require(packageMetadataFile);
 packageMetadata.version = version;
 
 const REGION = 'us-east-1';
 aws.config.region = REGION;
 
-var apiOptions = {
+let apiOptions = {
   deploymentBucket: 'wparad-microservice-deployment-artifacts-us-east-1',
   sourceDirectory: path.join(__dirname, 'src'),
   description: packageMetadata.description,
@@ -30,10 +30,10 @@ commander
   .action(() => {
     aws.config.credentials = new aws.SharedIniFileCredentials({ profile: 'wparad' });
 
-    var awsArchitect = new AwsArchitect(packageMetadata, apiOptions);
+    let awsArchitect = new AwsArchitect(packageMetadata, apiOptions);
     awsArchitect.Run(8080)
-    .then((result) => console.log(JSON.stringify(result, null, 2)))
-    .catch((failure) => console.log(JSON.stringify(failure, null, 2)));
+    .then(result => console.log(JSON.stringify(result, null, 2)))
+    .catch(failure => console.log(JSON.stringify(failure, null, 2)));
   });
 
 commander
@@ -46,6 +46,7 @@ commander
     /****** */
     await fs.writeJson(packageMetadataFile, packageMetadata, { spaces: 2 });
 
+    require('./src/ses-forwarder.js');
     if (!process.env.WARRENS_PERSONAL_EMAIL) {
       throw Error('WARRENS_PERSONAL_EMAIL environment variable is not set.');
     }

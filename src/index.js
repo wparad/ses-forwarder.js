@@ -1,7 +1,7 @@
 const aws = require('aws-sdk');
 const LambdaForwarder = require('./ses-forwarder');
 
-module.exports.handler = async (event, context) => {
-	const result = await LambdaForwarder.handler(new aws.S3(), new aws.SES(), event);
-	return result;
+module.exports.handler = async event => {
+  const result = await LambdaForwarder.handler(new aws.S3(), new aws.SES(), event);
+  return result;
 };
