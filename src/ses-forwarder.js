@@ -11,7 +11,8 @@ const blockedTags = {
   clickup: true, // clickup.com
   shelling: true,
   lambdatest: true, // lambdatest.com,
-  cryptobill: true
+  cryptobill: true,
+  merrell: true // merrell hiking
 };
 
 exports.handler = async function(s3client, sesClient, event) {
