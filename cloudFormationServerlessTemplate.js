@@ -6,7 +6,7 @@ module.exports = {
       Parameters: {
         emailBucketName: {
           Type: 'String',
-          Description: 'The name of the email bucket where to save incoming emails',
+          Description: 'The name of the email bucket where to save incoming emails'
         },
         serviceName: {
           Type: 'String',
@@ -238,15 +238,15 @@ module.exports = {
                 }
               }, {
                 LambdaAction: {
-                  "FunctionArn": { Ref: 'ProductionAlias' },
-                  "InvocationType": 'RequestResponse'
+                  'FunctionArn': { Ref: 'ProductionAlias' },
+                  'InvocationType': 'RequestResponse'
                 }
               }, {
                 BounceAction: {
-                  "Message": 'Message content rejected',
-                  "Sender": 'no-reply@warrenparad.net',
-                  "SmtpReplyCode": '500',
-                  "StatusCode": '5.6.1'
+                  'Message': 'Message content rejected',
+                  'Sender': `no-reply@${process.env.WARRENS_EMAIL_DOMAIN}`,
+                  'SmtpReplyCode': '500',
+                  'StatusCode': '5.6.1'
                 }
               }],
               Enabled: true,

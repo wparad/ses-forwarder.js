@@ -14,7 +14,7 @@ afterEach(() => sandbox.restore());
 describe('src/ses-forwarder.js', () => {
   describe('Handler', () => {
     it('default handler test', async () => {
-      let expectedMessage = `X-SES-Sender-S3-Object-Id: UnitTestId-0000\r\nX-SES-Original-Lambda-Event: eyJldmVudFNvdXJjZSI6ImF3czpzZXMiLCJldmVudFZlcnNpb24iOiIxLjAiLCJzZXMiOnsicmVjZWlwdCI6eyJzcGFtVmVyZGljdCI6eyJzdGF0dXMiOiJQQVNTIn0sInZpcnVzVmVyZGljdCI6eyJzdGF0dXMiOiJQQVNTIn19LCJtYWlsIjp7ImNvbW1vbkhlYWRlcnMiOnsiZnJvbSI6WyJVbml0VGVzdFNlbmRlckB1bml0dGVudC5jb20iXSwidG8iOlsiMjAxNzAxMDFAdW5pdHRlc3QubmV0Il0sInN1YmplY3QiOiJVbml0VGVzdCBTdWJqZWN0In0sImhlYWRlcnMiOltdLCJtZXNzYWdlSWQiOiJVbml0VGVzdElkLTAwMDAifX19\r\nTo: "20170101@unittest.net" <${process.env.WARRENS_PERSONAL_EMAIL}>\r\nSubject: UnitTest Subject\r\nFrom: "UnitTestSender@unittent.com" <no-reply@warrenparad.net>\r\nReply-To: UnitTestSender@unittent.com\r\nX-Original-To: 20170101@unittest.net\r\n\r\nThis is the body.`;
+      const expectedMessage = `X-SES-Sender-S3-Object-Id: UnitTestId-0000\r\nX-SES-Original-Lambda-Event: eyJldmVudFNvdXJjZSI6ImF3czpzZXMiLCJldmVudFZlcnNpb24iOiIxLjAiLCJzZXMiOnsicmVjZWlwdCI6eyJzcGFtVmVyZGljdCI6eyJzdGF0dXMiOiJQQVNTIn0sInZpcnVzVmVyZGljdCI6eyJzdGF0dXMiOiJQQVNTIn19LCJtYWlsIjp7ImNvbW1vbkhlYWRlcnMiOnsiZnJvbSI6WyJVbml0VGVzdFNlbmRlckB1bml0dGVudC5jb20iXSwidG8iOlsiMjAxNzAxMDFAdW5pdHRlc3QubmV0Il0sInN1YmplY3QiOiJVbml0VGVzdCBTdWJqZWN0In0sImhlYWRlcnMiOltdLCJtZXNzYWdlSWQiOiJVbml0VGVzdElkLTAwMDAifX19\r\nTo: "20170101@unittest.net" <${process.env.WARRENS_PERSONAL_EMAIL}>\r\nSubject: UnitTest Subject\r\nFrom: "UnitTestSender@unittent.com" <no-reply@${process.env.WARRENS_EMAIL_DOMAIN}>\r\nReply-To: UnitTestSender@unittent.com\r\nX-Original-To: 20170101@unittest.net\r\n\r\nThis is the body.`;
 
       const mockLogger = sandbox.mock(logger);
       mockLogger.expects('log').exactly(2);
@@ -188,7 +188,10 @@ describe('src/ses-forwarder.js', () => {
 
   describe('Validate my email address is still private', () => {
     it('process.env.WARRENS_PERSONAL_EMAIL', () => {
-      expect(process.env.WARRENS_PERSONAL_EMAIL).to.eql('');
+      expect(process.env.WARRENS_PERSONAL_EMAIL).to.eql(undefined);
+    });
+    it('process.env.WARRENS_EMAIL_DOMAIN', () => {
+      expect(process.env.WARRENS_EMAIL_DOMAIN).to.eql(undefined);
     });
   });
 });

@@ -47,7 +47,7 @@ commander
     await fs.writeJson(packageMetadataFile, packageMetadata, { spaces: 2 });
 
     require('./src/ses-forwarder.js');
-    if (!process.env.WARRENS_PERSONAL_EMAIL) {
+    if (!process.env.WARRENS_PERSONAL_EMAIL || !process.env.WARRENS_EMAIL_DOMAIN) {
       throw Error('WARRENS_PERSONAL_EMAIL environment variable is not set.');
     }
 
@@ -68,7 +68,7 @@ commander
         const parameters = {
           serviceName: packageMetadata.name,
           serviceDescription: packageMetadata.description,
-          emailBucketName: 'emails.warrenparad.net'
+          emailBucketName: `emails.${process.env.WARRENS_EMAIL_DOMAIN}`
         };
         await awsArchitect.deployTemplate(stackTemplate, stackConfiguration, parameters);
       }

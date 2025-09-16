@@ -1,12 +1,13 @@
 const { DateTime } = require('luxon');
 const logger = require('./logger');
+const ApplicationErrorWrapper = require('error-object-polyfill');
 
-const forwardFrom = 'no-reply@warrenparad.net';
-process.env.WARRENS_PERSONAL_EMAIL = '';
+const forwardFrom = `no-reply@${process.env.WARRENS_EMAIL_DOMAIN}`;
 const forwardTo = process.env.WARRENS_PERSONAL_EMAIL;
 const bucket = process.env.BucketName;
 
 const blockedTags = {
+  [`rfc@${process.env.WARRENS_EMAIL_DOMAIN}`]: true,
   biologicaldiversity: true,
   clickup: true, // clickup.com
   shelling: true,
@@ -14,6 +15,12 @@ const blockedTags = {
   cryptobill: true,
   merrell: true // merrell hiking
 };
+
+const blockedSenders = [
+  'Mrs Karen Ngui',
+  'k_ngui1@dds.com',
+  'efthimia@xwf.google.com'
+];
 
 exports.handler = async function(s3client, sesClient, event) {
   logger.log({ title: 'Starting email handling' });
@@ -28,10 +35,31 @@ async function handleRecord(s3client, sesClient, record) {
     return { disposition: 'STOP_RULE' };
   }
 
-  let msgInfo = record.ses;
+  let combinedEmail;
+  try {
+    combinedEmail = await validateMailIsNotSpam(s3client, sesClient, record);
+  } catch (error) {
+    if (error.code === 'SPAM') {
+      return { disposition: 'CONTINUE' };
+    }
+
+    logger.log({ title: `Failed to verify email is not spam: ${error.message}`, error });
+    throw error;
+  }
+
+  try {
+    await sesClient.sendRawEmail({ RawMessage: { Data: combinedEmail } }).promise();
+  } catch (error) {
+    logger.log({ title: `Failed to send email: ${error.message}`, error });
+  }
+  return { disposition: 'STOP_RULE' };
+}
+
+async function validateMailIsNotSpam(s3client, sesClient, record) {
+  const msgInfo = record.ses;
   // don't process spam messages
   if (msgInfo.receipt.spamVerdict.status === 'FAIL' || msgInfo.receipt.virusVerdict.status === 'FAIL') {
-    return { disposition: 'CONTINUE' };
+    throw new ApplicationErrorWrapper({ title: 'SES says mail is spam' }, 'SPAM');
   }
 
   const spf = msgInfo.receipt.spfVerdict && msgInfo.receipt.spfVerdict.status;
@@ -40,27 +68,24 @@ async function handleRecord(s3client, sesClient, record) {
   const failCount = +(spf === 'FAIL') + (dkim === 'FAIL') + (dmarc === 'FAIL');
   const passCount = +(spf === 'PASS') + (dkim === 'PASS') + (dmarc === 'PASS');
   if (failCount > 1 && !passCount) {
-    return { disposition: 'CONTINUE' };
+    throw new ApplicationErrorWrapper({ title: 'SES mail failed DMARC', dmarc, spf, dkim }, 'SPAM');
   }
 
   let originalFrom = msgInfo.mail.commonHeaders.from[0];
   const mappedTo = msgInfo.mail.commonHeaders.to || msgInfo.receipt.recipients || [];
   let toList = mappedTo.join(', ');
 
-  if (originalFrom.match('k_ngui1@dds.com') || originalFrom.match('Mrs Karen Ngui')) {
-    return { disposition: 'CONTINUE' };
+  if (blockedSenders.some(b => originalFrom.match(b))) {
+    throw new ApplicationErrorWrapper({ title: 'From spam emailer' }, 'SPAM');
   }
 
-  let amzToList = (msgInfo.receipt.recipients || []);
+  const amzToList = (msgInfo.receipt.recipients || []);
   const amzToListString = amzToList.join(', ');
-  if (amzToListString.match(/rfc@warrenparad.net/)) {
-    return { disposition: 'CONTINUE' };
-  }
 
   for (const email of amzToList) {
     let toName = email.split('@')[0];
-    if (blockedTags[toName.toLowerCase()] || toName.match(/^[-\d]{8,}$/) && DateTime.fromFormat(toName.replace(/-/g, ''), 'yyyyMMdd').plus({ days: 31 }) < DateTime.utc()) {
-      return { disposition: 'CONTINUE' };
+    if (blockedTags[email.toLowerCase()] || blockedTags[toName.toLowerCase()] || toName.match(/^[-\d]{8,}$/) && DateTime.fromFormat(toName.replace(/-/g, ''), 'yyyyMMdd').plus({ days: 31 }) < DateTime.utc()) {
+      throw new ApplicationErrorWrapper({ title: 'Old email address' }, 'SPAM');
     }
   }
 
@@ -101,22 +126,16 @@ async function handleRecord(s3client, sesClient, record) {
   headers += `Reply-To: ${originalFrom}\r\n`;
   headers += `X-Original-To: ${toList}\r\n`;
 
-  try {
-    const result = await s3client.getObject({ Bucket: bucket, Key: `Incoming/${msgInfo.mail.messageId}` }).promise();
-    let email = result.Body.toString();
-    let combinedEmail;
-    if (email) {
-      let splitEmail = email.split('\r\n\r\n');
-      splitEmail.shift();
-      combinedEmail = `${headers}\r\n${splitEmail.join('\r\n\r\n')}`;
-    } else {
-      combinedEmail = `${headers}\r\n` + 'Empty email';
-    }
-
-    await sesClient.sendRawEmail({ RawMessage: { Data: combinedEmail } }).promise();
-    return { disposition: 'STOP_RULE' };
-  } catch (failure) {
-    logger.log({ title: `Failed to send email: ${failure}` });
-    throw failure;
+  const result = await s3client.getObject({ Bucket: bucket, Key: `Incoming/${msgInfo.mail.messageId}` }).promise();
+  let email = result.Body.toString();
+  let combinedEmail;
+  if (email) {
+    let splitEmail = email.split('\r\n\r\n');
+    splitEmail.shift();
+    combinedEmail = `${headers}\r\n${splitEmail.join('\r\n\r\n')}`;
+  } else {
+    combinedEmail = `${headers}\r\n` + 'Empty email';
   }
+
+  return combinedEmail;
 }

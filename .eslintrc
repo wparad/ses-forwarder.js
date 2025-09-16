@@ -26,6 +26,7 @@
     "no-constant-condition": ["error", { "checkLoops": false }],
     "node/no-missing-require": ["error", {
       "allowModules": ["jose"]
-    }]
+    }],
+    "quote-props": ["off"]
   }
 }

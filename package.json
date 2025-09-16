@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1691.0",
-    "error-object-polyfill": "^1.2.39",
+    "error-object-polyfill": "^1.2.47",
     "json-stringify-safe": "^5.0.1",
     "luxon": "^3.5.0",
     "openapi-factory": "^5.4.85",

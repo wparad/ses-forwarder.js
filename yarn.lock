@@ -1170,10 +1170,12 @@ enquirer@^2.3.5:
     ansi-colors "^4.1.1"
     strip-ansi "^6.0.1"
 
-error-object-polyfill@^1.2.39:
-  version "1.2.39"
-  resolved "https://registry.yarnpkg.com/error-object-polyfill/-/error-object-polyfill-1.2.39.tgz#efd2bd6069104195c8c1c5181e7edc5b2b6d41e1"
-  integrity sha512-o4HgAsNpWMCEmmclD/QfnFpRPVILYl0uBifWsIqnp/IkNiEsDe2/eo2MZIkpj/AxwS53SXY+ij+vxNXoP3am9Q==
+error-object-polyfill@^1.2.47:
+  version "1.2.47"
+  resolved "https://registry.yarnpkg.com/error-object-polyfill/-/error-object-polyfill-1.2.47.tgz#10ef7a818960df7d827eb2a6a990a4876e4ace3a"
+  integrity sha512-RGmBpvhmaW8H59zpTgdjpolbJipb+dnJ+RrVy+CHyAc9JN8eSPls6mxSIW9Qu16jGJKyC2/UxAfFiWkL7xg1TA==
+  dependencies:
+    json-stringify-safe "^5.0.1"
 
 es-abstract@^1.22.1, es-abstract@^1.22.3, es-abstract@^1.23.0, es-abstract@^1.23.2:
   version "1.23.3"
