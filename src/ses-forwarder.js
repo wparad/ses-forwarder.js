@@ -19,7 +19,8 @@ const blockedTags = {
 const blockedSenders = [
   'Mrs Karen Ngui',
   'k_ngui1@dds.com',
-  'efthimia@xwf.google.com'
+  'efthimia@xwf.google.com',
+  'funds@wefunder.com'
 ];
 
 exports.handler = async function(s3client, sesClient, event) {
