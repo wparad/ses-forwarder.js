@@ -32,6 +32,15 @@ jobs:
     - name: Test
       run: yarn lint && yarn test
 
+    - name: Configure AWS Credentials
+      if: github.repository_owner == 'wparad'
+      uses: aws-actions/configure-aws-credentials@036a4a1ddf2c0e7a782dca6e083c6c53e5d90321
+      with:
+        aws-region: us-east-1
+        role-duration-seconds: 3600
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubRunnerAssumedRole
+        role-session-name: GitHubRunner-${{ github.repository_owner }}-SES-${{ github.run_number }}
+
     - name: Deploy
       run: node make.js deploy
       env:
