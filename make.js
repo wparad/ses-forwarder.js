@@ -31,7 +31,7 @@ commander
     aws.config.credentials = new aws.SharedIniFileCredentials({ profile: 'wparad' });
 
     let awsArchitect = new AwsArchitect(packageMetadata, apiOptions);
-    awsArchitect.Run(8080)
+    awsArchitect.run(8080)
     .then(result => console.log(JSON.stringify(result, null, 2)))
     .catch(failure => console.log(JSON.stringify(failure, null, 2)));
   });
@@ -40,10 +40,9 @@ commander
   .command('deploy')
   .description('Deploy to AWS.')
   .action(async () => {
-    /****** */
-    aws.config.credentials = new aws.SharedIniFileCredentials({ profile: 'wparad' });
-    process.env.CI_COMMIT_REF_SLUG = 'master';
-    /****** */
+    // /****** */
+    // process.env.CI_COMMIT_REF_SLUG = 'master';
+    // /****** */
     await fs.writeJson(packageMetadataFile, packageMetadata, { spaces: 2 });
 
     const awsArchitect = new AwsArchitect(packageMetadata, apiOptions);
