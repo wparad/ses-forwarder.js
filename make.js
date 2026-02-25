@@ -79,7 +79,7 @@ commander
       await awsArchitect.publishLambdaArtifactPromise();
       if (isMasterBranch) {
         const stackConfiguration = {
-          changeSetName: version.replace(/[^a-z0-9]/gi, '-'),
+          changeSetName: version,
           stackName: packageMetadata.name,
           automaticallyProtectStack: true
         };

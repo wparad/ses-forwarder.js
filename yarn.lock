@@ -617,10 +617,10 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-aws-architect@^6.7.133:
-  version "6.7.133"
-  resolved "https://registry.yarnpkg.com/aws-architect/-/aws-architect-6.7.133.tgz#689162c7fc95607ef9b0e1f8823e0ff4503a43bf"
-  integrity sha512-Wc7Th3115JBkYqQUvLyzk2UyHvFvQDGKZnoipmcE+dU/osyTByrM9gLyPascyDNMhDIiFo4moZquboqvKmYsTg==
+aws-architect@^6.7.136:
+  version "6.7.136"
+  resolved "https://registry.yarnpkg.com/aws-architect/-/aws-architect-6.7.136.tgz#6e1d4931654f1beaad97f85cbdfc001a19f7724d"
+  integrity sha512-nbQpHAllN0mlcWo0YZ0zGziYzUILHNKfhRq5Jz3MUG68mJSercIV7AXa4JjtADaiVLcJ4ZHJnAsEyk+g2AVM6g==
   dependencies:
     archiver "^5.3.0"
     body-parser "^1.18.2"
