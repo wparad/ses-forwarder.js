@@ -13,7 +13,8 @@ const blockedTags = {
   shelling: true,
   lambdatest: true, // lambdatest.com,
   cryptobill: true,
-  merrell: true // merrell hiking
+  merrell: true, // merrell hiking,
+  info: true
 };
 
 const blockedSenders = [

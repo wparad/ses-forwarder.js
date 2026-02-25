@@ -1,0 +1,47 @@
+on:
+  push:
+    branches:
+    - main
+    - master
+    - 'release/**'
+  pull_request:
+    branches:
+    - main
+    - master
+    - 'release/**'
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Install packages
+      run: npm install
+
+    - name: Test
+      run: yarn lint && yarn test
+
+    - name: Deploy
+      run: node make.js deploy
+
+    - name: Create Github Release and Tag
+      if: github.repository_owner == 'Authress' && github.event_name == 'push'
+      run: |
+        CLEAN_REF=${GITHUB_REF#refs/heads/}
+        CLEAN_REF=${CLEAN_REF#release/}
+        VERSION=${CLEAN_REF/master/0.0}
+        VERSION=${VERSION/main/0.0}
+        TAG="${VERSION}.${GITHUB_RUN_NUMBER}"
+        git tag $TAG_NAME
+        git push origin $TAG_NAME

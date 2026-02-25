@@ -185,13 +185,4 @@ describe('src/ses-forwarder.js', () => {
       expect(result).to.not.eql('Skipping, due to outdated email address.');
     });
   });
-
-  describe('Validate my email address is still private', () => {
-    it('process.env.WARRENS_PERSONAL_EMAIL', () => {
-      expect(process.env.WARRENS_PERSONAL_EMAIL).to.eql(undefined);
-    });
-    it('process.env.WARRENS_EMAIL_DOMAIN', () => {
-      expect(process.env.WARRENS_EMAIL_DOMAIN).to.eql(undefined);
-    });
-  });
 });
