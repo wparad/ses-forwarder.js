@@ -86,7 +86,9 @@ module.exports = {
             },
             Environment: {
               Variables: {
-                BucketName: { 'Fn::Sub': '${emailBucketName}-${AWS::AccountId}' }
+                BucketName: { 'Fn::Sub': '${emailBucketName}-${AWS::AccountId}' },
+                WARRENS_PERSONAL_EMAIL: process.env.WARRENS_PERSONAL_EMAIL,
+                WARRENS_EMAIL_DOMAIN: process.env.WARRENS_EMAIL_DOMAIN
               }
             },
             MemorySize: 128,

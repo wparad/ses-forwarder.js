@@ -34,6 +34,9 @@ jobs:
 
     - name: Deploy
       run: node make.js deploy
+      with:
+        WARRENS_EMAIL_DOMAIN: ${secrets.WARRENS_EMAIL_DOMAIN}
+        WARRENS_PERSONAL_EMAIL: ${secrets.WARRENS_PERSONAL_EMAIL}
 
     - name: Create Github Release and Tag
       if: github.repository_owner == 'Authress' && github.event_name == 'push'
