@@ -40,17 +40,20 @@ commander
   .command('deploy')
   .description('Deploy to AWS.')
   .action(async () => {
+    /****** */
+    aws.config.credentials = new aws.SharedIniFileCredentials({ profile: 'wparad' });
+    process.env.CI_COMMIT_REF_SLUG = 'master';
+    /****** */
     await fs.writeJson(packageMetadataFile, packageMetadata, { spaces: 2 });
-
-    require('./src/ses-forwarder.js');
-    if (!process.env.WARRENS_PERSONAL_EMAIL || !process.env.WARRENS_EMAIL_DOMAIN) {
-      throw Error('WARRENS_PERSONAL_EMAIL environment variable is not set.');
-    }
 
     const awsArchitect = new AwsArchitect(packageMetadata, apiOptions);
     const stackTemplateProvider = require('./cloudFormationServerlessTemplate');
     const stackTemplate = stackTemplateProvider.getStack();
     const isMasterBranch = process.env.CI_COMMIT_REF_SLUG === 'master';
+
+    if (!process.env.WARRENS_PERSONAL_EMAIL || !process.env.WARRENS_EMAIL_DOMAIN) {
+      throw Error('WARRENS_PERSONAL_EMAIL environment variable is not set.');
+    }
     
     try {
       await awsArchitect.validateTemplate(stackTemplate);
@@ -66,6 +69,7 @@ commander
           serviceDescription: packageMetadata.description,
           emailBucketName: `emails.${process.env.WARRENS_EMAIL_DOMAIN}`
         };
+
         await awsArchitect.deployTemplate(stackTemplate, stackConfiguration, parameters);
       }
 
