@@ -40,10 +40,6 @@ commander
   .command('deploy')
   .description('Deploy to AWS.')
   .action(async () => {
-    /****** */
-    aws.config.credentials = new aws.SharedIniFileCredentials({ profile: 'wparad' });
-    process.env.CI_COMMIT_REF_SLUG = 'master';
-    /****** */
     await fs.writeJson(packageMetadataFile, packageMetadata, { spaces: 2 });
 
     require('./src/ses-forwarder.js');
