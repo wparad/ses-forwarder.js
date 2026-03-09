@@ -7,7 +7,15 @@
     "@authress/eslint-config"
   ],
   "globals": {
-    "ApplicationError": false
+    "ApplicationError": false,
+    "describe": false,
+    "it": false,
+    "beforeEach": false,
+    "afterEach": false,
+    "beforeAll": false,
+    "afterAll": false,
+    "expect": false,
+    "vi": false
   },
   "parser": "@babel/eslint-parser",
   "parserOptions": {
