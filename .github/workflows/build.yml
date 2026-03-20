@@ -33,7 +33,7 @@ jobs:
       run: yarn lint && yarn test
 
     - name: Configure AWS Credentials
-      if: github.repository_owner == 'wparad'
+      if: github.repository_owner == 'wparad' && github.event_name == 'push'
       uses: aws-actions/configure-aws-credentials@v6.0.0
       with:
         aws-region: us-east-1
@@ -42,13 +42,14 @@ jobs:
         role-session-name: GitHubRunner-${{ github.repository_owner }}-SES-${{ github.run_number }}
 
     - name: Deploy
+      if: github.repository_owner == 'wparad' && github.event_name == 'push'
       run: node make.js deploy
       env:
         WARRENS_EMAIL_DOMAIN: ${{ secrets.WARRENS_EMAIL_DOMAIN }}
         WARRENS_PERSONAL_EMAIL: ${{ secrets.WARRENS_PERSONAL_EMAIL }}
 
     - name: Create Github Release and Tag
-      if: github.repository_owner == 'Authress' && github.event_name == 'push'
+      if: github.repository_owner == 'wparad' && github.event_name == 'push'
       run: |
         CLEAN_REF=${GITHUB_REF#refs/heads/}
         CLEAN_REF=${CLEAN_REF#release/}
