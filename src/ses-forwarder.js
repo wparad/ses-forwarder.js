@@ -14,7 +14,8 @@ const blockedTags = {
   lambdatest: true, // lambdatest.com,
   cryptobill: true,
   merrell: true, // merrell hiking,
-  info: true
+  info: true,
+  invoices: true // it never existed, and it never will exist
 };
 
 const blockedSenders = [
