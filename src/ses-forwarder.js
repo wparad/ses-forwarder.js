@@ -15,6 +15,7 @@ const blockedTags = {
   cryptobill: true,
   merrell: true, // merrell hiking,
   info: true,
+  fusionauth: true,
   invoice: true, // it never existed, and it never will exist
   invoices: true // it never existed, and it never will exist
 };
