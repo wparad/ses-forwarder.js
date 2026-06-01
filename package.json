@@ -35,7 +35,7 @@
     "glob": "^7.1.6",
     "nodemon": "^2.0.6",
     "sinon": "^18.0.1",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.0"
   },
   "repository": {
     "type": "git",
