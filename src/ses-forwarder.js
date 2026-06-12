@@ -17,8 +17,10 @@ const blockedTags = {
   info: true,
   'levi-sampson': true,
   fusionauth: true,
-  invoice: true, // it never existed, and it never will exist
-  invoices: true // it never existed, and it never will exist
+  // Never existed, and it never will exist
+  invoice: true,
+  invoices: true,
+  payable: true
 };
 
 const blockedSenders = [
