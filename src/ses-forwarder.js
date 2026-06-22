@@ -20,7 +20,9 @@ const blockedTags = {
   // Never existed, and it never will exist
   invoice: true,
   invoices: true,
-  payable: true
+  payable: true,
+  payables: true,
+  accounting: true
 };
 
 const blockedSenders = [
