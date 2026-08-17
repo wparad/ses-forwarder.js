@@ -22,7 +22,9 @@ const blockedTags = {
   invoices: true,
   payable: true,
   payables: true,
-  accounting: true
+  accounting: true,
+  ap_invoices: true,
+  'accounts.payable': true
 };
 
 const blockedSenders = [
