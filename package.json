@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@authress/eslint-config": "^1.0.4",
-    "@babel/core": "^7.15.8",
+    "@babel/core": "^7.29.6",
     "@babel/eslint-parser": "^7.15.8",
     "aws-architect": "^6.7.136",
     "chai": "4",
